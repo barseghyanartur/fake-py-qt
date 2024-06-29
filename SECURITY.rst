@@ -9,7 +9,7 @@ Please report security issues by emailing Artur Barseghyan
 
 Supported Versions
 ------------------
-The two most recent ``fake.py`` release series receive security support.
+The two most recent ``fake-py-qt`` release series receive security support.
 It's recommended to use the latest version.
 
 .. code-block:: text
@@ -17,17 +17,18 @@ It's recommended to use the latest version.
     ┌─────────────────┬────────────────┐
     │ Version         │ Supported      │
     ├─────────────────┼────────────────┤
-    │ 0.7.x           │ Yes            │
+    │ 0.2.x           │ Yes            │
     ├─────────────────┼────────────────┤
-    │ 0.6.x           │ Yes            │
+    │ 0.1.x           │ Yes            │
     ├─────────────────┼────────────────┤
-    │ < 0.6           │ No             │
+    │ < 0.1           │ No             │
     └─────────────────┴────────────────┘
 
 .. note::
 
     For example, during the development cycle leading to the release
-    of ``fake.py`` 0.17.x, support will be provided for ``fake.py`` 0.16.x.
+    of ``fake-py-qt`` 0.17.x, support will be provided for ``fake-py-qt``
+    0.16.x.
 
-    Upon the release of ``fake.py`` 0.18.x, security support for ``fake.py``
-    0.16.x will end.
+    Upon the release of ``fake-py-qt`` 0.18.x, security support for
+    ``fake-py-qt`` 0.16.x will end.
