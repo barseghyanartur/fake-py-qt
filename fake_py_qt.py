@@ -27,8 +27,8 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-__title__ = "fake.py"
-__version__ = "0.1"
+__title__ = "fake-py-qt"
+__version__ = "0.1.1"
 __author__ = "Artur Barseghyan <artur.barseghyan@gmail.com>"
 __copyright__ = "2024 Artur Barseghyan"
 __license__ = "MIT"
@@ -129,7 +129,7 @@ class FakePyQTApp(QMainWindow):
         # Get provider arguments and create form fields
         args_with_types = get_provider_args(provider_func)
         for arg, arg_type in args_with_types.items():
-            label = QLabel(f"{arg}:")  # Removed type hint from the label
+            label = QLabel(f"{arg}:")
             label.setAlignment(
                 Qt.AlignLeft
             )  # Ensure label alignment to the left
