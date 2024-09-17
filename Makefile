@@ -51,6 +51,11 @@ test: clean
 
 test-all: test
 
+test-headless: clean
+	QT_QPA_PLATFORM=offscreen pytest -vrx -s
+
+test-all-headless: test-headless
+
 shell:
 	source $(VENV) && ipython
 

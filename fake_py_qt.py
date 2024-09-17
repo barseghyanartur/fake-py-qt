@@ -154,6 +154,7 @@ class FakePyQTApp(QMainWindow):
         right_layout.addWidget(results_scroll_area)
 
         self.clear_button = QPushButton("Clear List")
+        self.clear_button.clicked.connect(self.clear_list)
         right_layout.addWidget(self.clear_button)
 
         # Split the widgets into 50% each
