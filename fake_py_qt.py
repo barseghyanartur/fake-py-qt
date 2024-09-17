@@ -21,6 +21,8 @@ from PyQt5.QtWidgets import (
     QMenu,
     QMessageBox,
     QPushButton,
+    QScrollArea,
+    QSizePolicy,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -50,21 +52,32 @@ class FakePyQTApp(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        # Main layout container
         container = QWidget()
         self.setCentralWidget(container)
-        layout = QHBoxLayout()
+        main_layout = QHBoxLayout()
 
-        # Left layout for provider tree and buttons
+        # Left layout components
+        left_layout = self.setup_left_layout()
+        main_layout.addLayout(left_layout, 1)
+
+        # Middle layout components for dynamic forms
+        middle_layout = self.setup_middle_layout()
+        main_layout.addLayout(middle_layout, 2)
+
+        # Right layout components for preview and history
+        right_layout = self.setup_right_layout()
+        main_layout.addLayout(right_layout, 1)
+
+        container.setLayout(main_layout)
+        self.populate_providers()
+
+    def setup_left_layout(self):
         left_layout = QVBoxLayout()
-
-        # Category and provider tree
         self.provider_tree = QTreeWidget()
         self.provider_tree.setHeaderLabel("Providers")
         self.provider_tree.currentItemChanged.connect(self.on_provider_selected)
         left_layout.addWidget(self.provider_tree)
 
-        # Collapse All and Expand All buttons
         buttons_layout = QHBoxLayout()
         self.collapse_button = QPushButton("Collapse All")
         self.collapse_button.clicked.connect(self.collapse_all)
@@ -75,35 +88,85 @@ class FakePyQTApp(QMainWindow):
         buttons_layout.addWidget(self.expand_button)
 
         left_layout.addLayout(buttons_layout)
+        return left_layout
 
-        layout.addLayout(left_layout, 1)
+    def setup_middle_layout(self):
+        middle_layout = QVBoxLayout()
 
-        # Dynamic form for provider arguments
+        # Simple Description Label above the form
+        self.provider_description = QLabel(
+            "Select a provider to see its description."
+        )
+        self.provider_description.setWordWrap(True)
+        self.provider_description.setMaximumHeight(50)  # Limit height to 50px
+        self.provider_description.setStyleSheet("border: 0")
+
+        # No need for special styles, it will inherit the default stylesheet.
+
+        # Add the description label to the middle layout, not the form layout
+        middle_layout.addWidget(self.provider_description)
+
         self.form_widget = QWidget()
         self.form_layout = QFormLayout()
-        self.form_layout.setLabelAlignment(Qt.AlignLeft)
         self.form_widget.setLayout(self.form_layout)
-        layout.addWidget(self.form_widget, 2)
+        middle_layout.addWidget(self.form_widget)
+        return middle_layout
 
-        # Results display
-        results_layout = QVBoxLayout()
+    def setup_right_layout(self):
+        right_layout = QVBoxLayout()
+
+        # Preview Widget with Scroll Area
+        preview_scroll_area = QScrollArea()
+        self.preview_display = QLabel(
+            "Select an item from history to see its preview here."
+        )
+        self.preview_display.setWordWrap(True)
+        self.preview_display.setStyleSheet("padding: 10px; border: 0;")
+        self.preview_display.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding
+        )
+        self.preview_display.setMinimumHeight(
+            100
+        )  # Ensure a minimum height for content
+        preview_scroll_area.setWidget(self.preview_display)
+        preview_scroll_area.setWidgetResizable(True)
+        preview_scroll_area.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding
+        )
+        right_layout.addWidget(preview_scroll_area)
+
+        # History List with Scroll Area
+        results_scroll_area = QScrollArea()
         self.results_display = QListWidget()
+        self.results_display.setStyleSheet("padding: 10px; border: 0;")
         self.results_display.setContextMenuPolicy(Qt.CustomContextMenu)
         self.results_display.customContextMenuRequested.connect(
             self.open_context_menu
         )
-        results_layout.addWidget(self.results_display)
+        self.results_display.itemClicked.connect(self.update_preview)
+        self.results_display.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding
+        )
+        results_scroll_area.setWidget(self.results_display)
+        results_scroll_area.setWidgetResizable(True)
+        results_scroll_area.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding
+        )
+        right_layout.addWidget(results_scroll_area)
 
-        # Clear list button
         self.clear_button = QPushButton("Clear List")
-        self.clear_button.clicked.connect(self.clear_list)
-        results_layout.addWidget(self.clear_button)
+        right_layout.addWidget(self.clear_button)
 
-        layout.addLayout(results_layout, 1)
+        # Split the widgets into 50% each
+        right_layout.setStretch(0, 1)  # preview_display takes 50%
+        right_layout.setStretch(1, 1)  # results_display takes 50%
 
-        container.setLayout(layout)
+        return right_layout
 
-        self.populate_providers()
+    def update_preview(self, item):
+        self.preview_display.setText(item.text())
+
+    # ******************************************************
 
     def populate_providers(self):
         for category, providers in self.categories.items():
@@ -120,6 +183,13 @@ class FakePyQTApp(QMainWindow):
             self.build_form(provider_func)
 
     def build_form(self, provider_func):
+        # Update the provider description
+        if provider_func.__doc__:
+            description = provider_func.__doc__.split("\n")[0]
+        else:
+            description = "No description available for this provider."
+        self.provider_description.setText(description)
+
         # Clear existing form widgets
         while self.form_layout.count():
             child = self.form_layout.takeAt(0)
@@ -170,7 +240,9 @@ class FakePyQTApp(QMainWindow):
 
         try:
             result = provider_func(**kwargs)
-            self.results_display.addItem(str(result))
+            result_str = str(result)
+            self.results_display.addItem(result_str)
+            self.preview_display.setText(result_str)
             # Scroll to bottom when new item is added
             self.results_display.scrollToBottom()
         except Exception as e:
