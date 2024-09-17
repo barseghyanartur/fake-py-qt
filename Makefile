@@ -1,5 +1,5 @@
 # Update version ONLY here
-VERSION := 0.1
+VERSION := 0.1.1
 SHELL := /bin/bash
 # Makefile for project
 VENV := ~/.virtualenvs/fake-py-qt/bin/activate
@@ -50,6 +50,11 @@ test: clean
 	source $(VENV) && pytest -vrx -s
 
 test-all: test
+
+test-headless: clean
+	QT_QPA_PLATFORM=offscreen pytest -vrx -s
+
+test-all-headless: test-headless
 
 shell:
 	source $(VENV) && ipython
