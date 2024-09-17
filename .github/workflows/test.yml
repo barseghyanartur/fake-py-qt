@@ -51,7 +51,6 @@ jobs:
           - "3.11"
           - "3.10"
           - "3.9"
-          - "3.8"
     steps:
       - name: Clean-up
         run: sudo apt clean && sudo apt autoclean && sudo rm -rf /tmp/* && sudo rm -rf /usr/share/dotnet && sudo rm -rf /opt/ghc && sudo rm -rf "/usr/local/share/boost" && sudo rm -rf "$AGENT_TOOLSDIRECTORY"
@@ -67,7 +66,7 @@ jobs:
         run: |
           pip install -e .[all]
       - name: Run test suite
-        run: pytest -vrx
+        run: QT_QPA_PLATFORM=offscreen pytest -vrx -s
         env:
           PYTEST_ADDOPTS: "-vv --durations=10"
       - name: Coveralls
