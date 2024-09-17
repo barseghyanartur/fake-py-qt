@@ -93,7 +93,7 @@ class FakePyQTApp(QMainWindow):
     def setup_middle_layout(self):
         middle_layout = QVBoxLayout()
 
-        # Simple Description Label above the form
+        # Simple description label above the form
         self.provider_description = QLabel(
             "Select a provider to see its description."
         )
@@ -103,7 +103,7 @@ class FakePyQTApp(QMainWindow):
 
         # No need for special styles, it will inherit the default stylesheet.
 
-        # Add the description label to the middle layout, not the form layout
+        # Add the description label to the middle layout, not the form layout.
         middle_layout.addWidget(self.provider_description)
 
         self.form_widget = QWidget()
@@ -115,7 +115,7 @@ class FakePyQTApp(QMainWindow):
     def setup_right_layout(self):
         right_layout = QVBoxLayout()
 
-        # Preview Widget with Scroll Area
+        # Preview widget with scroll area.
         preview_scroll_area = QScrollArea()
         self.preview_display = QLabel(
             "Select an item from history to see its preview here."
@@ -125,9 +125,8 @@ class FakePyQTApp(QMainWindow):
         self.preview_display.setSizePolicy(
             QSizePolicy.Expanding, QSizePolicy.Expanding
         )
-        self.preview_display.setMinimumHeight(
-            100
-        )  # Ensure a minimum height for content
+        # Ensure a minimum height for content
+        self.preview_display.setMinimumHeight(100)
         preview_scroll_area.setWidget(self.preview_display)
         preview_scroll_area.setWidgetResizable(True)
         preview_scroll_area.setSizePolicy(
